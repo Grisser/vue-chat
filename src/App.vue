@@ -3,9 +3,11 @@
         <Container>
             <ChatWindow>
                 <ChatMessage
-                        username="Ivan"
-                        datetime="21.12.2019 05:00:50">
-                    Hello, World!
+                    v-for="(message, index) in messages"
+                    v-bind:key="index"
+                    v-bind:username="message.author"
+                    v-bind:datetime="message.datetime">
+                    {{ message.text }}
                 </ChatMessage>
             </ChatWindow>
         </Container>
@@ -21,6 +23,22 @@
         name: 'app',
         components: {
             Container, ChatMessage, ChatWindow
+        },
+        data() {
+            return {
+                messages: []
+            }
+        },
+        methods: {
+            getMessages() {
+                this.axios.get("http://188.225.47.187/api/chat/getmessages.php")
+                    .then((response) => {
+                        this.messages = response.data.reverse();
+                    })
+            }
+        },
+        mounted() {
+            this.getMessages();
         }
     }
 </script>
