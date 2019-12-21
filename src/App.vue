@@ -1,7 +1,8 @@
 <template>
     <div id="app">
         <Container>
-            <ChatWindow>
+            <ChatWindow
+                v-on:send-message="sendMessage($event)">
                 <ChatMessage
                     v-for="(message, index) in messages"
                     v-bind:key="index"
@@ -35,10 +36,18 @@
                     .then((response) => {
                         this.messages = response.data.reverse();
                     })
+            },
+            sendMessage(params) {
+                this.axios.post("http://188.225.47.187/api/chat/sendmessage.php", {
+                    author: params.username,
+                    text: params.text
+                }).then(() => {
+                    this.getMessages();
+                });
             }
         },
         mounted() {
-            this.getMessages();
+            setInterval(this.getMessages, 1000);
         }
     }
 </script>
